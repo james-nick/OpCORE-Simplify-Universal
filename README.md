@@ -1,6 +1,6 @@
 <br/>
 <div align="center">
-  <h3 align="center">OpCore Simplify UNIVERSAL</h3>
+  <h3 align="center">OpCore Simplify UNIVERSAL STOPPED as NO GPU MEANS NO DISPLAY</h3>
 
   <p align="center">
     A specialized tool that streamlines <a href="https://github.com/acidanthera/OpenCorePkg">OpenCore</a> EFI creation by automating the essential setup process and providing standardized configurations. **Usable for unsupported hardware this time** Designed to reduce manual effort while ensuring accuracy in your Hackintosh journey.
