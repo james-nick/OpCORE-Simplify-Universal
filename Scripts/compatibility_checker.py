@@ -188,13 +188,25 @@ class CompatibilityChecker:
             if gpu_props.get("OCLP Compatibility"):
                 self.ocl_patched_macos_version = (gpu_props.get("OCLP Compatibility")[0], self.ocl_patched_macos_version[-1] if self.ocl_patched_macos_version and self.utils.parse_darwin_version(self.ocl_patched_macos_version[-1]) < self.utils.parse_darwin_version(gpu_props.get("OCLP Compatibility")[-1]) else gpu_props.get("OCLP Compatibility")[-1])
         
+        # MODIFIED: Comment out the GPU exit requirement
+        # if max_supported_gpu_version == min_supported_gpu_version and max_supported_gpu_version == None:
+        #     print("")
+        #     print("You cannot install macOS without a supported GPU.")
+        #     print("Please do NOT spam my inbox or issue tracker about this issue anymore!")
+        #     print("")
+        #     self.utils.request_input()
+        #     self.utils.exit_program()
+        
+        # MODIFIED: Set defaults if no supported GPU found
         if max_supported_gpu_version == min_supported_gpu_version and max_supported_gpu_version == None:
             print("")
-            print("You cannot install macOS without a supported GPU.")
-            print("Please do NOT spam my inbox or issue tracker about this issue anymore!")
+            print("\033[1;93mWarning: No supported GPU detected\033[0m")
+            print("Unsupported GPUs will be disabled in the config.")
+            print("You may need to use integrated graphics or manually configure GPU support.")
             print("")
-            self.utils.request_input()
-            self.utils.exit_program()
+            # Use CPU compatibility as fallback
+            max_supported_gpu_version = self.max_native_macos_version
+            min_supported_gpu_version = self.min_native_macos_version
 
         self.max_native_macos_version = max_supported_gpu_version if self.utils.parse_darwin_version(max_supported_gpu_version) < self.utils.parse_darwin_version(self.max_native_macos_version) else self.max_native_macos_version
         self.min_native_macos_version = min_supported_gpu_version if self.utils.parse_darwin_version(min_supported_gpu_version) > self.utils.parse_darwin_version(self.min_native_macos_version) else self.min_native_macos_version
