@@ -411,6 +411,14 @@ class OCPE:
                     native_macos_version = ["19.0.0", "24.99.99"]  # Wide range to allow selection
                     ocl_patched_macos_version = None
                     # DON'T delete GPUs - let hardware_customizer handle them
+                    # But ensure GPU dict exists with at least one dummy entry
+                    if not hardware_report.get("GPU") or not hardware_report["GPU"]:
+                        hardware_report["GPU"] = {
+                            "Unsupported GPU": {
+                                "Device Type": "Discrete GPU",
+                                "Compatibility": (None, None)
+                            }
+                        }
                     print("")
                     self.u.request_input("Press Enter to continue...")
                 
