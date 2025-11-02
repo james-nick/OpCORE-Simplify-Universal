@@ -424,6 +424,14 @@ class OCPE:
                 
                 macos_version = self.select_macos_version(hardware_report, native_macos_version, ocl_patched_macos_version)
                 customized_hardware, disabled_devices, needs_oclp = self.h.hardware_customization(hardware_report, macos_version)
+                # MODIFIED: Ensure GPU exists in customized_hardware too
+                if not customized_hardware.get("GPU") or not customized_hardware["GPU"]:
+                    customized_hardware["GPU"] = {
+                        "Unsupported GPU": {
+                            "Device Type": "Discrete GPU",
+                            "Compatibility": (None, None)
+                        }
+                    }
                 smbios_model = self.s.select_smbios_model(customized_hardware, macos_version)
                 # MODIFIED: Initialize acpi_tables if None
                 if self.ac.acpi.acpi_tables is None:
@@ -445,6 +453,14 @@ class OCPE:
             if option == "2":
                 macos_version = self.select_macos_version(hardware_report, native_macos_version, ocl_patched_macos_version)
                 customized_hardware, disabled_devices, needs_oclp = self.h.hardware_customization(hardware_report, macos_version)
+                # MODIFIED: Ensure GPU exists in customized_hardware
+                if not customized_hardware.get("GPU") or not customized_hardware["GPU"]:
+                    customized_hardware["GPU"] = {
+                        "Unsupported GPU": {
+                            "Device Type": "Discrete GPU",
+                            "Compatibility": (None, None)
+                        }
+                    }
                 smbios_model = self.s.select_smbios_model(customized_hardware, macos_version)
                 needs_oclp = self.k.select_required_kexts(customized_hardware, macos_version, needs_oclp, self.ac.patches)
                 self.s.smbios_specific_options(customized_hardware, smbios_model, macos_version, self.ac.patches, self.k)
