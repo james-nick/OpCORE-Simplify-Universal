@@ -387,27 +387,39 @@ class OCPE:
                     hardware_report, native_macos_version, ocl_patched_macos_version = self.c.check_compatibility(hardware_report)
                 except Exception as e:
                     print("")
-                    print("\033[1;93mWarning: Compatibility check encountered an issue.\033[0m")
-                    print("\033[1;93mContinuing with unsupported hardware - GPU support may be limited.\033[0m")
+                    print("\033[1;93m" + "="*70 + "\033[0m")
+                    print("\033[1;93mWarning: Unsupported hardware detected\033[0m")
+                    print("\033[1;93m" + "="*70 + "\033[0m")
+                    print("")
+                    print("Some hardware in your system is not officially supported.")
+                    print("The EFI will be built, but unsupported devices will be disabled.")
+                    print("")
+                    print("\033[1;36mWhat this means:\033[0m")
+                    print("- Unsupported GPUs will be disabled via config.plist")
+                    print("- You may need to use integrated graphics (iGPU)")
+                    print("- Boot args like -wegnoegpu may be added automatically")
+                    print("- GPU-specific kexts will not be included")
+                    print("")
+                    print("\033[1;36mYou can manually enable later if needed:\033[0m")
+                    print("- Add device-properties spoofing in config.plist")
+                    print("- Use SSDT to spoof device IDs")
+                    print("- Refer to Dortnia's GPU Buyers Guide")
+                    print("")
+                    print("\033[1;93m" + "="*70 + "\033[0m")
                     print("")
                     # Set default values to allow continuation
-                    native_macos_version = ["19.0.0", "24.99.99"]  # macOS Catalina to latest
+                    native_macos_version = ["19.0.0", "24.99.99"]  # Wide range to allow selection
                     ocl_patched_macos_version = None
-                    # Remove unsupported GPUs from report
-                    if "GPU" in hardware_report:
-                        unsupported_gpus = []
-                        for gpu_name, gpu_props in hardware_report["GPU"].items():
-                            if gpu_props.get("Compatibility", (None, None)) == (None, None):
-                                unsupported_gpus.append(gpu_name)
-                        for gpu_name in unsupported_gpus:
-                            print("  Removing unsupported GPU: {}".format(gpu_name))
-                            del hardware_report["GPU"][gpu_name]
+                    # DON'T delete GPUs - let hardware_customizer handle them
                     print("")
                     self.u.request_input("Press Enter to continue...")
                 
                 macos_version = self.select_macos_version(hardware_report, native_macos_version, ocl_patched_macos_version)
                 customized_hardware, disabled_devices, needs_oclp = self.h.hardware_customization(hardware_report, macos_version)
                 smbios_model = self.s.select_smbios_model(customized_hardware, macos_version)
+                # MODIFIED: Initialize acpi_tables if None
+                if self.ac.acpi.acpi_tables is None:
+                    self.ac.select_acpi_tables()
                 if not self.ac.ensure_dsdt():
                     self.ac.select_acpi_tables()
                 self.ac.select_acpi_patches(customized_hardware, disabled_devices)
