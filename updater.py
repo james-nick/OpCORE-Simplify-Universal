@@ -13,9 +13,13 @@ class Updater:
         self.run = run.Run().run
         self.utils = utils.Utils()
         self.sha_version = os.path.join(os.path.dirname(os.path.realpath(__file__)), "sha_version.txt")
-        self.download_repo_url = "https://github.com/lzhoang2801/OpCore-Simplify/archive/refs/heads/main.zip"
+        # MODIFIED: Changed to point to your fork
+        self.download_repo_url = "https://github.com/james-nick/OpCORE-Simplify-Universal/archive/refs/heads/main.zip"
         self.temporary_dir = tempfile.mkdtemp()
         self.current_step = 0
+        # MODIFIED: Changed GitHub user and repo name
+        self.github_user = "james-nick"
+        self.github_repo = "OpCORE-Simplify-Universal"
 
     def get_current_sha_version(self):
         print("Checking current version...")
@@ -34,7 +38,8 @@ class Updater:
     def get_latest_sha_version(self):
         print("Fetching latest version from GitHub...")
         try:
-            commits = self.github.get_commits("lzhoang2801", "OpCore-Simplify")
+            # MODIFIED: Use the new variables for your fork
+            commits = self.github.get_commits(self.github_user, self.github_repo)
             return commits["commitGroups"][0]["commits"][0]["oid"]
         except Exception as e:
             print("Error fetching latest SHA version: {}".format(str(e)))
@@ -74,9 +79,10 @@ class Updater:
         self.current_step += 1
         print("Step {}: Updating files...".format(self.current_step))
         try:
-            target_dir = os.path.join(self.temporary_dir, "OpCore-Simplify-main")
+            # MODIFIED: Updated directory name to match your fork
+            target_dir = os.path.join(self.temporary_dir, "OpCORE-Simplify-Universal-main")
             if not os.path.exists(target_dir):
-                target_dir = os.path.join(self.temporary_dir, "main", "OpCore-Simplify-main")
+                target_dir = os.path.join(self.temporary_dir, "main", "OpCORE-Simplify-Universal-main")
                 
             if not os.path.exists(target_dir):
                 print("  Could not locate extracted files directory")
